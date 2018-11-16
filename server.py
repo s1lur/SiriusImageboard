@@ -9,7 +9,7 @@ from validate_email import validate_email
 from bcrypt import hashpw, gensalt
 import json
 from genrandomword import random_word
-import passwordmeter
+import safe
 """
 TODO:
 1.Add rating - done
@@ -273,8 +273,8 @@ def settings():
     and request.form.get('oldPassword', None) is not None:
         old_password = request.form['oldPassword']
         new_password = request.form['newPassword']
-        strength, improvements = passwordmeter.test(old_password)
-        if strength < 0.5:
+
+        if bool(not safe.check(new_password)):
             flash('Password is too weak')
             return redirect(url_for('settings')) 
         if hashpw(old_password, current_user.password):
@@ -324,8 +324,7 @@ def signup():
         password = request.form['inputPassword']
         email = request.form['inputEmail']
         repeat_password = request.form['repeatPassword']
-        strength, improvements = passwordmeter.test(password)
-        if strength < 0.5:
+        if bool(not safe.check(new_password)):
             flash('Password is too weak')
             return redirect(url_for('signup')) 
         if User.query.filter_by(email=email).first() is not None:
