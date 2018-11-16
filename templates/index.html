@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <title>S1lur's imageboard</title>
+    <style>
+        .postPreview {
+            overflow: hidden; 
+            width:calc(100% - 65px);
+            height: 1.4em; 
+            white-space: nowrap;
+            text-overflow: ellipsis
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+        .arrow-up {
+            width: 0; 
+            height: 0; 
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+  
+            border-bottom: 10px solid #00000088;
+        }
+        .arrow-up:hover {
+            border-bottom: 10px solid #000000ff;
+        }
+        .arrow-down {
+            width: 0; 
+            height: 0; 
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid #00000088;
+        }
+        .arrow-down:hover {
+            border-top: 10px solid #000000ff;
+        }
+    </style>
+    
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+        
+
+        <a class="navbar-brand text-light" href="/" style="font-size: 15px;">S1lur's imageboard</a>
+        {% if g.user.is_authenticated %}
+        <button type="button" class="btn btn-success" onclick="location.href='/newpost'">+</button>
+        {% endif %}
+        <ul class="navbar-nav ml-auto" style="display: inline-block;">
+            {% if not g.user.is_authenticated%}
+            <li class="nav-item" style="display: inline-block;">
+                <button type="button" class="btn btn-success ml-auto" onclick="location.href='/login'" style="margin-right:-15px; transform: scale(0.8)">Login</button>
+            </li>
+            <li class="nav-item" style="display: inline;">
+                <button type="button" class="btn btn-outline-success ml-auto" onclick="location.href='/signup'" style="transform: scale(0.8);">Sign up</button>  
+            </li>
+            {% endif %}
+            {% if g.user.is_authenticated %}
+            <li class="nav-item" style="display: inline-block;">
+                <button type="button" class="btn btn-success ml-auto" onclick="location.href='/settings'" style="transform: scale(0.8);">Settings</button>
+            </li>
+            {% endif %}
+        </ul>  
+    </nav>
+    <div style="overflow-y:scroll; overflow-x:hidden; height:calc(100vh - 100px); z-index: -1; width:100%; text-overflow: clip;">
+	<table class="table table-striped col-9 mx-auto table-bordered" style="max-width:80%; max-height:100%; margin-top:10px; table-layout: fixed;">
+        {% for thread in threads %}
+        <tr class="col-12">
+			<td class="col-10">
+                <a href="/thread/{{ thread.id }}">{{ thread.title }}</a>
+                {% if thread.img_present %}
+                <img src="/static/{{ thread.img_src }}" style="float:left; margin-right:5px; width: 60px; height:60px;">
+                {% endif %}
+                <div class="postPreview text-black-50">
+                    {{ thread.description }}
+                </div>
+            </td>
+            <td class="text-right align-middle">
+                {% if g.user.is_authenticated %} 
+                <div class="arrow-up upvote?{{ thread.id }}" id="upvote"></div>
+                {% endif %}
+                {% if thread.rating > 0 %}
+                <div id="rating{{ thread.id }}" class="text-success"> 
+                {% endif %}
+                {% if thread.rating == 0 %}
+                <div id="rating{{ thread.id }}" class="text-black-50">
+                {% endif %}
+                {% if thread.rating < 0 %}
+                <div id="rating{{ thread.id }}" class="text-danger">
+                {% endif %}
+                    {{ thread.rating }}
+                </div>
+                {% if g.user.is_authenticated %} 
+                <div class="arrow-down downvote?{{ thread.id }}" id="downvote"></div>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    </div>
+    <script>
+        $(function() {
+            $(".arrow-up").click(function(e) {
+                $.getJSON({
+                    type: "POST",
+                    url: window.location.pathname,
+                    data: {'id' : $(this).attr("class").split("?")[1], 'vote': 'up'},
+                    success: function(result) {
+                        new_rating = result['new_rating']
+                        id = "#rating" + result['thread_id']
+                        if(new_rating > 0) {
+                            $(id).attr("class", "text-success")   
+                        } 
+                        if(new_rating == 0) {
+                            $(id).attr("class", "text-black-50")
+                        }
+                        $("#rating" + result['thread_id']).text(result['new_rating']);
+                    }
+                });
+            });
+            $(".arrow-down").click(function(e) {
+                $.getJSON({
+                    type: "POST",
+                    url: window.location.pathname,
+                    data: {'id' : $(this).attr("class").split("?")[1], 'vote': 'down'},
+                    success: function(result) {
+                        new_rating = result['new_rating']
+                        id = "#rating" + result['thread_id']
+                        if(new_rating < 0) {
+                            $(id).attr("class", "text-danger")   
+                        } 
+                        if(new_rating == 0) {
+                            $(id).attr("class", "text-black-50")
+                        }
+                        $("#rating" + result['thread_id']).text(result['new_rating']);
+                    }
+                });
+            });
+        });
+    </script>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    
+  </body>
+</html>
