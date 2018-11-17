@@ -54,7 +54,7 @@ class User(db.Model):
  
     def __init__(self, name, password, email):
         self.name = name
-        self.password = hashpw(password, gensalt())
+        self.password = hashpw(password.encode('utf-8'), gensalt())
         self.email = email
         self.csrf_token = random_word()
 
@@ -263,7 +263,7 @@ def login():
         email = request.form['inputEmail']
         password = request.form['inputPassword']
         registered_user = User.query.filter_by(email=email).first()
-        if registered_user is None or not hashpw(password, registered_user.password) != registered_user.password:
+        if registered_user is None or hashpw(password.encode('utf-8'), registered_user.password) != registered_user.password:
             flash('Email or Password is invalid')
             return redirect(url_for('login'))
         login_user(registered_user, remember=True)
@@ -334,7 +334,7 @@ def signup():
         password = request.form['inputPassword']
         email = request.form['inputEmail']
         repeat_password = request.form['repeatPassword']
-        if bool(not safe.check(new_password)):
+        if bool(not safe.check(password)):
             flash('Password is too weak')
             return redirect(url_for('signup')) 
         if User.query.filter_by(email=email).first() is not None:
@@ -355,7 +355,6 @@ def signup():
         if len(name) >= 20:
             flash('Username must be less than 20 characters long') 
             return redirect(url_for('signup'))
-
         user = User(name, password, email)
         db.session.add(user)
         db.session.commit()

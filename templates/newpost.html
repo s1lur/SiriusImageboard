@@ -8,9 +8,9 @@
     <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
         <title>Create a new post</title>
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
     </head>
     <body>
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
@@ -41,9 +41,9 @@
                 <input type="text" name="threadTitle" class="form-control" style="width:80%; margin-left:20px;" placeholder="Title here...">
                 <label for="descText" style="margin-left:20px;">Tell users about new thread:</label>
                 <textarea type="text" name="descText" class="form-control d-flex align-bottom" rows="6" style="margin-left:20px; width:80%;" placeholder="Thread description here..."></textarea>
-               <label class="btn btn-success" style="position:absolute; margin-top:6px; margin-left:85px;">
-                    Browse&hellip; <input type="file" accept="image/*" name="photo" style="display: none;">
-               </label>
+                <label class="btn btn-success" style="position:absolute; margin-top:6px; margin-left:85px; width:100px;" id="choosefiledesc">
+                        <span class="choosefiledesctext" style="width:100px;  overflow: hidden; white-space: nowrap; display: block; margin-left:-10px; text-overflow: ellipsis;">Browse&hellip;</span> <input type="file" accept="image/*" name="photo" id="photo" style="display: none;">
+                </label>
                <input type="hidden" name="csrftoken" value={{g.user.csrf_token}}>
             </div>
             <button type="submit" class="btn btn-success align-bottom" style="margin-left:20px; margin-top:6px;">Post</button>
@@ -51,6 +51,14 @@
         <div style="bottom: 5px; position: absolute; width: 100%; background-color:#fff;"></div>
         <!-- Optional JavaScript -->
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-       
+       <script>
+           $('#photo').on('change',function(){
+                //get the file name
+                subpaths = $(this).val().split("\\");
+                var fileName = subpaths[subpaths.length - 1];
+                //replace the "Choose a file" label
+                $('.choosefiledesctext').text(fileName);
+        })
+       </script>
     </body>
 </html>
