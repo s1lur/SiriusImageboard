@@ -41,14 +41,10 @@
                 <input type="text" name="threadTitle" class="form-control" style="width:80%; margin-left:20px;" placeholder="Title here...">
                 <label for="descText" style="margin-left:20px;">Tell users about new thread:</label>
                 <textarea type="text" name="descText" class="form-control d-flex align-bottom" rows="6" style="margin-left:20px; width:80%;" placeholder="Thread description here..."></textarea>
-                <!--<div class="custom-file" id="customFile" style="margin-left:20px; margin-top:5px; width:200px">
-                    <input type="file" accept="image/*" class="custom-file-input" id="exampleInputFile">
-                    <label class="custom-file-label" for="exampleInputFile">
-                    </label>
-                </div>-->
                <label class="btn btn-success" style="position:absolute; margin-top:6px; margin-left:85px;">
                     Browse&hellip; <input type="file" accept="image/*" name="photo" style="display: none;">
                </label>
+               <input type="hidden" name="csrftoken" value={{g.user.csrf_token}}>
             </div>
             <button type="submit" class="btn btn-success align-bottom" style="margin-left:20px; margin-top:6px;">Post</button>
         </form>

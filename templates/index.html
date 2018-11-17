@@ -113,7 +113,7 @@
                 $.getJSON({
                     type: "POST",
                     url: window.location.pathname,
-                    data: {'id' : $(this).attr("class").split("?")[1], 'vote': 'up'},
+                    data: {'id' : $(this).attr("class").split("?")[1], 'vote': 'up', 'csrftoken': {{g.user.csrf_token}}},
                     success: function(result) {
                         new_rating = result['new_rating']
                         id = "#rating" + result['thread_id']
@@ -131,7 +131,7 @@
                 $.getJSON({
                     type: "POST",
                     url: window.location.pathname,
-                    data: {'id' : $(this).attr("class").split("?")[1], 'vote': 'down'},
+                    data: {'id' : $(this).attr("class").split("?")[1], 'vote': 'down', 'csrftoken': {{g.user.csrf_token}}},
                     success: function(result) {
                         new_rating = result['new_rating']
                         id = "#rating" + result['thread_id']

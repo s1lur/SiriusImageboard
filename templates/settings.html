@@ -117,6 +117,7 @@
                         <input type="password" class="form-control" id="oldPassword" name="oldPassword" placeholder="Old password" style="margin-top:10px;">
                         <input type="password" class="form-control" id="inputPassword" name="inputPassword" placeholder="New password" style="margin-top:10px;">
                         <input type="password" class="form-control" id="repeatPassword" name="repeatPassword" placeholder="Repeat password" style="margin-top:10px;">
+                        <input type="hidden" name="csrftoken" value=g.user.csrftoken>
                     </div>
                     
                     <button type="submit" class="btn btn-primary btn-success" id="submitPasswords" name="submitPasswords" disabled>Change password</button>
@@ -130,6 +131,7 @@
                     <div class="form-group">
                         <input type="email" class="form-control" id="oldEmail" name="oldEmail" placeholder="Old email" style="margin-top:10px;">
                         <input type="email" class="form-control" id="newEmail" name="newEmail" placeholder="New email" style="margin-top:10px;">
+                        <input type="hidden" name="csrftoken" value=g.user.csrftoken>
                     </div>
                     <button type="submit" class="btn btn-primary btn-success" id="submitEmails" name="submitEmails">Change email</button>
                 </form>
@@ -141,6 +143,7 @@
                 <form action="" method=post>
                     <div class="form-group">
                         <input type="text" class="form-control" id="inputName" name="inputName" placeholder="New name" style="margin-top:10px;">
+                        <input type="hidden" name="csrftoken" value={{g.user.csrf_token}}>
                     </div>
                     <button type="submit" class="btn btn-primary btn-success" id="submitEmails" name="submitEmails">Change name</button>
                 </form>

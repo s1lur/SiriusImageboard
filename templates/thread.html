@@ -144,6 +144,7 @@
            <label class="btn btn-success" style="position:absolute; margin-top:6px; margin-left:85px;">
                 Browse&hellip; <input type="file" accept="image/*" name="photo" id="photo" style="display: none;">
            </label>
+           <input type="hidden" value={{g.user.csrf_token}} name="csrftoken">
         </div>
         <button type="submit" class="btn btn-success align-bottom" id="submit" style="margin-left:20px; margin-top:-10px;" disabled>Post</button>
     </form>
@@ -158,7 +159,7 @@
                 $.getJSON({
                     type: "POST",
                     url: window.location.pathname,
-                    data: {'vote': 'up'},
+                    data: {'vote': 'up', 'csrftoken': {{g.user.csrf_token}}},
                     success: function(result) {
                         new_rating = result['new_rating']
                         id = "#rating"
@@ -176,7 +177,7 @@
                 $.getJSON({
                     type: "POST",
                     url: window.location.pathname,
-                    data: {'vote': 'down'},
+                    data: {'vote': 'down', 'csrftoken': {{g.user.csrf_token}}},
                     success: function(result) {
                         new_rating = result['new_rating']
                         id = "#rating"

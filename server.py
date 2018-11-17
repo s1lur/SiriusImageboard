@@ -50,11 +50,13 @@ class User(db.Model):
     name = db.Column('name', db.String(20), unique=True , index=True)
     password = db.Column('password' , db.String(10))
     email = db.Column('email',db.String(50),unique=True , index=True)
+    csrf_token = db.Column('csrftoken', db.String(64), unique=True, index=True)
  
     def __init__(self, name, password, email):
         self.name = name
         self.password = hashpw(password, gensalt())
         self.email = email
+        self.csrf_token = random_word()
 
     def is_authenticated(self):
         return True
@@ -138,6 +140,8 @@ def index():
         threads = Thread.query.all()
         threads.sort(reverse=True, key=(lambda thread: thread.rating - (float(time.mktime(datetime.now().timetuple())) - float(time.mktime(thread.created_on.timetuple()))) / 86400))
         return render_template('index.html', **locals())
+    if request.form.get('csrftoken', None) is None or request.form.get('csrftoken', None) != current_user.csrf_token:
+        return redirect(url_for('index'))
     if request.form.get('id', None) is not None and request.form.get('vote', None) is not None:
         thread_id = request.form['id']
         user_id = current_user.get_id()
@@ -181,6 +185,8 @@ def newpost():
         if not current_user.is_authenticated:
             return redirect(url_for('index'))
         return render_template('newpost.html')
+    if request.form.get('csrftoken', None) is None or request.form.get('csrftoken', None) != current_user.csrf_token:
+        return redirect(url_for('index'))
     if request.form.get('threadTitle', None) is not None and request.form.get('descText', None) is not None:
         title = request.form['threadTitle']
         if 'photo' in request.files:
@@ -204,6 +210,8 @@ def thread(thread_id):
         if thread is None:
             return render_template('404.html')
         return render_template('thread.html', **locals())
+    if request.form.get('csrftoken', None) is None or request.form.get('csrftoken', None) != current_user.csrf_token:
+        return redirect(url_for('/thread/' + str(thread_id)))
     if request.form.get('vote', None) is not None and request.form.get('user_id', None) is not None:
         user_id = current_user.get_id()
         vote = request.form['vote']
@@ -269,6 +277,8 @@ def settings():
         if not current_user.is_authenticated:
             return redirect(url_for('index'))
         return render_template('settings.html') 
+    if request.form.get('csrftoken', None) is None or request.form.get('csrftoken', None) != current_user.csrf_token:
+        return redirect(url_for('settings'))
     if request.form.get('inputPassword', None) is not None and request.form.get('repeatPassword', None) is not None\
     and request.form.get('oldPassword', None) is not None:
         old_password = request.form['oldPassword']
